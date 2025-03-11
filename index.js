@@ -89,7 +89,45 @@ app.get("/pets", async (req, res) => {
 
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
-// * Code for Route 2 goes here
+app.get('/form', async (req, res) => {
+    const petId = req.query.id;
+    if (!petId) {
+        return res.status(400).send('Pet ID is required');
+    }
+
+    const url = `https://api.hubapi.com/crm/v3/objects/p144357029_pet/${petId}?properties=name,species,favorite_toy`;
+    try {
+        const response = await axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const pet = response.data;
+
+        console.log(pet);  // Check if the pet object has the expected structure
+        const petData = {
+            id: pet.id,
+            name: pet.properties.name || '',
+            species: pet.properties.species || '',
+            favorite_toy: pet.properties.favorite_toy || ''
+        };
+
+        console.log(petData);  // Check if the data being passed to Pug is correct
+
+        // Send the pet data to the pug template
+        res.render('form', {
+            title: 'Edit Pet',
+            pet: petData, // Pass the pet data to the pug template
+        });
+    } catch (error) {
+        console.error("Error fetching pet data:", error);
+        res.status(500).send('Error fetching pet data');
+    }
+});
+
+
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
 

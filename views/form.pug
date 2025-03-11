@@ -1,0 +1,18 @@
+doctype html
+html
+  head
+    title= title
+  body
+    h1= title
+    form(action="/update" method="POST")
+      input(type="hidden" name="id" value=pet.hs_object_id)
+      label(for="name") Name
+      input(type="text" id="name" name="name" value=pet.name placeholder="Enter pet's name")
+
+      label(for="species") Species
+      input(type="text" id="species" name="species" value=pet.species placeholder="Enter species")
+
+      label(for="favorite_toy") Favorite Toy
+      input(type="text" id="favorite_toy" name="favorite_toy" value=pet.favorite_toy placeholder="Enter favorite toy")
+
+      button(type="submit") Save Pet
