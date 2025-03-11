@@ -63,7 +63,7 @@ app.post('/create-custom-object', async (req, res) => {
 
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
 
-app.get("/pets", async (req, res) => {
+app.get("/", async (req, res) => {
     try {
         const response = await axios.get(PETS_API_URL, {
             headers: {
@@ -131,52 +131,55 @@ app.get('/form', async (req, res) => {
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
 
-// * Code for Route 3 goes here
+app.post('/form', async (req, res) => {
+    const petId = req.query.id; // Get the petId from the query string
+    const { name, species, favorite_toy } = req.body; // Get form data
 
-/** 
-* * This is sample code to give you a reference for how you should structure your calls. 
-
-* * App.get sample
-app.get('/contacts', async (req, res) => {
-    const contacts = 'https://api.hubspot.com/crm/v3/objects/contacts';
-    const headers = {
-        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
-        'Content-Type': 'application/json'
+    if (!name || !species || !favorite_toy) {
+        return res.status(400).send('All fields are required');
     }
-    try {
-        const resp = await axios.get(contacts, { headers });
-        const data = resp.data.results;
-        res.render('contacts', { title: 'Contacts | HubSpot APIs', data });      
-    } catch (error) {
-        console.error(error);
-    }
-});
 
-* * App.post sample
-app.post('/update', async (req, res) => {
-    const update = {
+    const data = {
         properties: {
-            "favorite_book": req.body.newVal
+            name: name,
+            species: species,
+            favorite_toy: favorite_toy
         }
-    }
-
-    const email = req.query.email;
-    const updateContact = `https://api.hubapi.com/crm/v3/objects/contacts/${email}?idProperty=email`;
-    const headers = {
-        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
-        'Content-Type': 'application/json'
     };
 
-    try { 
-        await axios.patch(updateContact, update, { headers } );
-        res.redirect('back');
-    } catch(err) {
-        console.error(err);
+    try {
+        let response;
+    
+        if (petId) {
+            // Update existing pet
+            const url = `https://api.hubapi.com/crm/v3/objects/p144357029_pet/${petId}`;
+            response = await axios.patch(url, data, {
+                headers: {
+                    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+        } else {
+            // Create new pet
+            const url = 'https://api.hubapi.com/crm/v3/objects/p144357029_pet';
+            response = await axios.post(url, data, {
+                headers: {
+                    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+        }
+    
+        // Add logging to confirm execution reaches here
+        console.log("Pet data saved, redirecting to homepage");
+    
+        // Redirect to the homepage after successful submission
+        res.redirect('/');
+    
+    } catch (error) {
+        console.error("Error saving pet data:", error);
+        res.status(500).send('Error saving pet data');
     }
-
 });
-*/
 
-
-// * Localhost
 app.listen(3000, () => console.log('Listening on http://localhost:3000'));
