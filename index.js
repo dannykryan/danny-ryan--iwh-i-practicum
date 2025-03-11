@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const PRIVATE_APP_ACCESS = process.env.PRIVATE_APP_ACCESS;
-const PETS_API_URL = "https://api.hubapi.com/crm/v3/objects/p144357029_pet";
+const PETS_API_URL = "https://api.hubapi.com/crm/v3/objects/2-140221726";
 
 // POST endpoint to create a new custom object
 app.post('/create-custom-object', async (req, res) => {
@@ -95,7 +95,7 @@ app.get('/form', async (req, res) => {
         return res.status(400).send('Pet ID is required');
     }
 
-    const url = `https://api.hubapi.com/crm/v3/objects/p144357029_pet/${petId}?properties=name,species,favorite_toy`;
+    const url = `https://api.hubapi.com/crm/v3/objects/2-140221726/${petId}?properties=name,species,favorite_toy`;
     try {
         const response = await axios.get(url, {
             headers: {
@@ -152,7 +152,7 @@ app.post('/form', async (req, res) => {
     
         if (petId) {
             // Update existing pet
-            const url = `https://api.hubapi.com/crm/v3/objects/p144357029_pet/${petId}`;
+            const url = `https://api.hubapi.com/crm/v3/objects/2-140221726/${petId}`;
             response = await axios.patch(url, data, {
                 headers: {
                     Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
@@ -161,7 +161,7 @@ app.post('/form', async (req, res) => {
             });
         } else {
             // Create new pet
-            const url = 'https://api.hubapi.com/crm/v3/objects/p144357029_pet';
+            const url = 'https://api.hubapi.com/crm/v3/objects/2-140221726';
             response = await axios.post(url, data, {
                 headers: {
                     Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
